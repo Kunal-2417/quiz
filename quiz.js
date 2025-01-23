@@ -4,6 +4,7 @@ const quiz = document.getElementById("quiz");
 const nextBtn = document.getElementById("next");
 const scoreContainer = document.getElementById("score-container");
 const scoreDisplay = document.getElementById("score");
+const retakeBtn = document.createElement("button"); // Create the Retake button
 
 let userAnswers = [];
 let currentQuestionIndex = 0;
@@ -88,7 +89,8 @@ function moveToNextQuestion() {
         scoreDisplay.textContent = `${score} / ${quizData.length}`;
         scoreContainer.style.display = "block";
         quiz.style.display = "none"; // Hide quiz after completion
-        nextBtn.disabled = true; // Disable next after quiz is completed
+        nextBtn.style.display = "none"; // Hide Next button after quiz is completed
+        addRetakeButton(); // Show the Retake Test option
     }
 
     // Save state to localStorage after moving to the next question
@@ -96,6 +98,27 @@ function moveToNextQuestion() {
         questionIndex: currentQuestionIndex,
         userAnswers: userAnswers
     }));
+}
+
+function addRetakeButton() {
+    retakeBtn.textContent = "Retake Test";
+    retakeBtn.style.display = "block";
+    retakeBtn.addEventListener("click", resetQuiz);
+    scoreContainer.appendChild(retakeBtn);
+}
+
+function resetQuiz() {
+    // Reset all quiz states
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    localStorage.removeItem('quizState'); // Clear stored data
+    scoreContainer.style.display = "none"; // Hide the score container
+    quiz.style.display = "block"; // Show the quiz again
+    nextBtn.style.display = "inline-block"; // Show the Next button
+    retakeBtn.style.display = "none"; // Hide the Retake button
+
+    // Render the first question
+    renderQuestion(currentQuestionIndex);
 }
 
 function calculateScore() {

@@ -9,13 +9,14 @@
 
 html,
 body {
-    height: 100%;
+    /* height: 100%; */
     font-family: 'Comfortaa', cursive;
     color: #333;
     /* Adjusted for better contrast */
     background: linear-gradient(135deg, #a8c0ff, #3f2b96);
     /* Added gradient background */
-    overflow: hidden;
+    /* overflow: hidden; */
+    scroll-behavior: auto;
 }
 
 .container {
@@ -33,7 +34,8 @@ body {
     border-radius: 10px;
     padding: 20px;
     margin: 20px;
-    background-color: #fff;
+    max-height: fit-content;
+    background-color: #ede9f0;
     /* White background for contrast */
 }
 

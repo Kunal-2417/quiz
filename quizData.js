@@ -7,12 +7,12 @@ export const quizData = [
     {
         question: "What is 12 + 8?",
         options: ["18", "20", "22", "24"],
-        correct: 0
+        correct: 1
     },
     {
         question: "What is 15 - 8?",
         options: ["5", "6", "7", "8"],
-        correct: 1
+        correct: 2
     },
     {
         question: "What is 100 - 45?",
@@ -32,7 +32,7 @@ export const quizData = [
     {
         question: "What is 120 ÷ 15?",
         options: ["6", "7", "8", "9"],
-        correct: 0
+        correct: 2
     },
     {
         question: "What is 98 ÷ 14?",

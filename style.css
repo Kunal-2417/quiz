@@ -1,7 +1,7 @@
 /* Reset some default browser styles */
 *,
-*:before,
-*:after {
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -11,8 +11,10 @@ html,
 body {
     height: 100%;
     font-family: 'Comfortaa', cursive;
-    background: #a8c0ff;
-    color: #fff;
+    color: #333;
+    /* Adjusted for better contrast */
+    background: linear-gradient(135deg, #a8c0ff, #3f2b96);
+    /* Added gradient background */
     overflow: hidden;
 }
 
@@ -25,9 +27,21 @@ body {
     text-align: center;
 }
 
+.outer-box {
+    border: 4px solid #07090b;
+    /* Dark border for contrast */
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    background-color: #fff;
+    /* White background for contrast */
+}
+
 h1 {
     font-size: 3rem;
     margin-bottom: 20px;
+    color: #07090b;
+    /* Dark text for better readability */
 }
 
 /* Quiz section */
@@ -45,9 +59,15 @@ h1 {
     margin-bottom: 30px;
 }
 
+.timer {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
 .buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -75,6 +95,8 @@ button:hover:not(:disabled) {
     margin-top: 20px;
     font-size: 1.25rem;
     font-weight: bold;
+    color: #07090b;
+    /* Dark text for visibility */
 }
 
 /* Quiz option styles */
@@ -83,14 +105,16 @@ button:hover:not(:disabled) {
     align-items: center;
     margin-bottom: 15px;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .options label:hover {
     background: #f1f1f1;
+    transform: scale(1.02);
+    /* Slight hover effect */
 }
 
 input[type="radio"] {
@@ -120,12 +144,7 @@ input[type="radio"]:checked+label .alphabet {
     background: #f1f1f1;
 }
 
-/* Hide score initially */
-#score-container {
-    display: none;
-}
-
-/* Additional style for accessibility and mobile screens */
+/* Responsive styles for smaller screens */
 @media (max-width: 600px) {
     .question-portion {
         padding: 20px;

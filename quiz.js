@@ -1,13 +1,19 @@
 import { quizData } from './quizData.js';
 
 const quiz = document.getElementById("quiz");
-const saveBtn = document.getElementById("save");
 const nextBtn = document.getElementById("next");
 const scoreContainer = document.getElementById("score-container");
 const scoreDisplay = document.getElementById("score");
 
 let userAnswers = [];
 let currentQuestionIndex = 0;
+
+// Retrieve the stored data (if any)
+const storedData = JSON.parse(localStorage.getItem('quizState'));
+if (storedData) {
+    currentQuestionIndex = storedData.questionIndex || 0;
+    userAnswers = storedData.userAnswers || [];
+}
 
 function renderQuestion(index) {
     const question = quizData[index];
@@ -25,7 +31,6 @@ function renderQuestion(index) {
         </div>
     `;
     nextBtn.disabled = true; // Disable next button until an option is selected
-    saveBtn.disabled = false; // Enable save button
     attachRadioListeners(index); // Attach listeners after rendering question
 }
 
@@ -33,31 +38,64 @@ function attachRadioListeners(index) {
     const radioButtons = document.querySelectorAll(`input[name="q${index}"]`);
     radioButtons.forEach(radioButton => {
         radioButton.addEventListener('change', (event) => {
-            changeColorOnSelect(event.target);
-            saveAnswer();
+            disableOptions(); // Disable all options once an answer is selected
+            showFeedback(event.target, index); // Show feedback (green or red)
+            saveAnswer(event.target); // Save the selected answer
         });
     });
 }
 
-function changeColorOnSelect(selectedRadio) {
-    // Remove previously selected colors
-    const allLabels = document.querySelectorAll('label');
+function disableOptions() {
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(button => {
+        button.disabled = true; // Disable all radio buttons
+    });
+}
+
+function showFeedback(selectedRadio, index) {
+    const allLabels = document.querySelectorAll(`label`);
     allLabels.forEach(label => {
         label.style.backgroundColor = '';  // Reset background color
         label.style.color = '';           // Reset text color
     });
 
     const selectedLabel = selectedRadio.parentElement;
-    selectedLabel.style.backgroundColor = '#007bff';  // Selected color
-    selectedLabel.style.color = '#fff';                // Text color when selected
+    const correctOptionIndex = quizData[index].correct;
+
+    // If selected answer is correct
+    if (parseInt(selectedRadio.value) === correctOptionIndex) {
+        selectedLabel.style.backgroundColor = 'green'; // Correct answer color
+    } else {
+        selectedLabel.style.backgroundColor = 'red'; // Wrong answer color
+        // Highlight correct answer in green
+        const correctLabel = document.querySelectorAll(`input[name="q${index}"]`)[correctOptionIndex].parentElement;
+        correctLabel.style.backgroundColor = 'green';
+    }
+
+    nextBtn.disabled = false; // Enable next button after selection and feedback
 }
 
-function saveAnswer() {
-    const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
-    if (selectedOption) {
-        userAnswers[currentQuestionIndex] = parseInt(selectedOption.value);
-        nextBtn.disabled = false; // Enable next button after answer is selected
+function saveAnswer(selectedRadio) {
+    userAnswers[currentQuestionIndex] = parseInt(selectedRadio.value);
+}
+
+function moveToNextQuestion() {
+    if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+    } else {
+        const score = calculateScore();
+        scoreDisplay.textContent = `${score} / ${quizData.length}`;
+        scoreContainer.style.display = "block";
+        quiz.style.display = "none"; // Hide quiz after completion
+        nextBtn.disabled = true; // Disable next after quiz is completed
     }
+
+    // Save state to localStorage after moving to the next question
+    localStorage.setItem('quizState', JSON.stringify({
+        questionIndex: currentQuestionIndex,
+        userAnswers: userAnswers
+    }));
 }
 
 function calculateScore() {
@@ -70,24 +108,8 @@ function calculateScore() {
     return score;
 }
 
-saveBtn.addEventListener("click", () => {
-    saveAnswer();
-});
-
 nextBtn.addEventListener("click", () => {
-    saveAnswer();
-
-    if (currentQuestionIndex < quizData.length - 1) {
-        currentQuestionIndex++;
-        renderQuestion(currentQuestionIndex);
-    } else {
-        const score = calculateScore();
-        scoreDisplay.textContent = `${score} / ${quizData.length}`;
-        scoreContainer.style.display = "block";
-        quiz.style.display = "none"; // Hide quiz after completion
-        saveBtn.disabled = true; // Disable save after quiz is completed
-        nextBtn.disabled = true; // Disable next after quiz is completed
-    }
+    moveToNextQuestion();
 });
 
 // Initialize Quiz
